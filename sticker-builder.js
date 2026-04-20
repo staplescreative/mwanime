@@ -624,12 +624,31 @@ function doDownload() {
 }
 document.getElementById('btn-download').addEventListener('click', doDownload);
 
-// Order
+// Order — submits to BC cart with design note
 function doOrder() {
-  var handle = encodeURIComponent(S.handle);
-  var tpl    = encodeURIComponent(S.template);
-  var msg    = 'Hi, I would like to order a custom sticker. Handle: ' + S.handle + ', Template: ' + S.template + ', BG: ' + S.bgCol + ', Text: ' + S.txtCol;
-  window.open('https://wa.me/447880428181?text=' + encodeURIComponent(msg), '_blank');
+  var note = 'Instagram sticker order'
+    + ' | Handle: ' + S.handle
+    + ' | Template: ' + S.template
+    + ' | BG: ' + S.bgCol
+    + ' | Text: ' + S.txtCol
+    + ' | Accent: ' + S.accCol
+    + ' | Size: ' + S.fontSize + 'px'
+    + ' | Tag: ' + (S.showTag ? 'yes' : 'no');
+  var form = document.createElement('form');
+  form.method = 'post';
+  form.action = 'https://mosho.works/cart/add';
+  var fields = {
+    'cart[add][id]': '480573867',
+    'cart[add][quantity]': '1',
+    'cart[add][note]': note
+  };
+  Object.keys(fields).forEach(function(k) {
+    var i = document.createElement('input');
+    i.type = 'hidden'; i.name = k; i.value = fields[k];
+    form.appendChild(i);
+  });
+  document.body.appendChild(form);
+  form.submit();
 }
 document.getElementById('btn-order').addEventListener('click', doOrder);
 document.getElementById('btn-order-2').addEventListener('click', doOrder);
