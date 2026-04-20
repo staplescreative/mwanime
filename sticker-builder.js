@@ -14,7 +14,17 @@ var S = {
   accCol:   '#FFBC00',
   fontSize: 110,
   showTag:  true,
+  font:     'Russo One',
 };
+
+var FONTS = [
+  { id:'Russo One',      label:'Russo One'      },
+  { id:'Racing Sans One',label:'Racing Sans One' },
+  { id:'Bebas Neue',     label:'Bebas Neue'      },
+  { id:'Black Ops One',  label:'Black Ops One'   },
+  { id:'Orbitron',       label:'Orbitron'        },
+  { id:'Chakra Petch',   label:'Chakra Petch'    },
+];
 
 /* ── TEMPLATES ──────────────────────────────────── */
 var TEMPLATES = [
@@ -103,7 +113,7 @@ function drawRacing(W, H) {
   // Handle text — main
   ctx.save();
   var fs = Math.min(S.fontSize, H * .52);
-  ctx.font = 'italic 700 ' + fs + 'px "Russo One", "Chakra Petch", sans-serif';
+  ctx.font = 'italic 700 ' + fs + 'px "' + S.font + '", sans-serif';
   ctx.fillStyle = txt;
   ctx.textBaseline = 'middle';
   // Outline / shadow
@@ -179,7 +189,7 @@ function drawPlate(W, H) {
   // Handle
   ctx.save();
   var fs = Math.min(S.fontSize * .9, H*.48);
-  ctx.font = '700 ' + fs + 'px "Russo One", "Chakra Petch", sans-serif';
+  ctx.font = '700 ' + fs + 'px "' + S.font + '", sans-serif';
   ctx.fillStyle = txt;
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'center';
@@ -245,7 +255,7 @@ function drawCallsign(W, H) {
   // Handle
   ctx.save();
   var fs = Math.min(S.fontSize * .85, H*.46);
-  ctx.font = '700 ' + fs + 'px "Source Code Pro", monospace';
+  ctx.font = '700 ' + fs + 'px "' + S.font + '", sans-serif';
   ctx.fillStyle = txt;
   ctx.textBaseline = 'middle';
   ctx.fillText(formatHandle(S.handle, S.platform), W*.04, H*.57);
@@ -329,7 +339,7 @@ function drawItasha(W, H) {
   // Handle — italic, large
   ctx.save();
   var fs = Math.min(S.fontSize * .88, H*.5);
-  ctx.font = 'italic 700 ' + fs + 'px "Russo One","Chakra Petch",sans-serif';
+  ctx.font = 'italic 700 ' + fs + 'px "' + S.font + '", sans-serif';
   ctx.fillStyle = txt;
   ctx.textBaseline = 'middle';
   ctx.shadowColor = hexAlpha('#000', .3);
@@ -564,11 +574,31 @@ function rgbToHex(rgb) {
   return '#' + [1,2,3].map(function(i){return parseInt(m[i]).toString(16).padStart(2,'0');}).join('');
 }
 
+/* ── BUILD FONT SELECTOR ─────────────────────────── */
+function buildFonts() {
+  var el = document.getElementById('font-select');
+  if (!el) return;
+  FONTS.forEach(function(f) {
+    var b = document.createElement('button');
+    b.className = 'style-opt' + (S.font === f.id ? ' active' : '');
+    b.style.fontFamily = '"' + f.id + '", sans-serif';
+    b.textContent = f.label;
+    b.addEventListener('click', function() {
+      S.font = f.id;
+      el.querySelectorAll('.style-opt').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      draw(); drawThumbs();
+    });
+    el.appendChild(b);
+  });
+}
+
 /* ── INIT ────────────────────────────────────────── */
 buildSwatches('sw-bg',  PALETTES.bg,  'bgCol',  'cp-bg',  'ch-bg');
 buildSwatches('sw-txt', PALETTES.txt, 'txtCol', 'cp-txt', 'ch-txt');
 buildSwatches('sw-acc', PALETTES.acc, 'accCol', 'cp-acc', 'ch-acc');
 buildTemplates();
+buildFonts();
 
 wireColour('cp-bg',  'ch-bg',  'bgCol',  'sw-bg');
 wireColour('cp-txt', 'ch-txt', 'txtCol', 'sw-txt');
@@ -629,6 +659,7 @@ function doOrder() {
   var note = 'Instagram sticker order'
     + ' | Handle: ' + S.handle
     + ' | Template: ' + S.template
+    + ' | Font: ' + S.font
     + ' | BG: ' + S.bgCol
     + ' | Text: ' + S.txtCol
     + ' | Accent: ' + S.accCol
