@@ -529,20 +529,22 @@ function buildTemplates() {
 }
 
 function drawThumbs() {
-  var savedW = canvas.width, savedH = canvas.height;
+  var mainCanvas = document.getElementById('sticker-canvas');
+  var mainCtx = mainCanvas.getContext('2d');
   var savedTemplate = S.template;
   TEMPLATES.forEach(function(t) {
     var thumb = document.querySelector('.tpl-thumb[data-tpl="'+t.id+'"]');
+    if (!thumb) return;
     var tc = thumb.querySelector('canvas');
+    if (!tc) return;
     canvas = tc;
     ctx = tc.getContext('2d');
     canvas.width = 160; canvas.height = 53;
     S.template = t.id;
     draw();
   });
-  canvas = document.getElementById('sticker-canvas');
-  ctx = canvas.getContext('2d');
-  canvas.width = savedW; canvas.height = savedH;
+  canvas = mainCanvas;
+  ctx = mainCtx;
   S.template = savedTemplate;
   draw();
 }
